@@ -1,0 +1,245 @@
+PROJECT = 'AesFileEncrypt'
+
+INITLAKEFILE()
+
+TESTDIR = J('.', 'test', 'bin')
+
+if as_bool(FIXED_TABLES) then
+  DEFINES = L{DEFINES, 'FIXED_TABLES'}
+end
+
+aes = c.shared{'aes';
+  base     = 'aes';
+  src      = {'aes_modes','aescrypt','aeskey','aestab'};
+  defines  = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+  };
+  dynamic  = DYNAMIC;
+}
+
+sha = c.shared{'sha';
+  base     = 'sha';
+  src      = {'sha1', 'sha2'};
+  defines  = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+  };
+  incdir   = J('..', 'aes');
+  dynamic  = DYNAMIC;
+}
+
+shab = c.shared{'shab';
+  base     = 'sha';
+  src      = {'sha1b', 'sha2b'};
+  defines  = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+  };
+  incdir   = J('..', 'aes');
+  dynamic  = DYNAMIC;
+}
+
+hmac1 = c.shared{'hmac1';
+  base     = 'sha';
+  src      = {'hmac'};
+  defines  = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+    "USE_SHA1";
+  };
+  incdir   = J('..', 'aes');
+  libdir   = {'sha'};
+  libs     = {'sha'};
+  dynamic  = DYNAMIC;
+  compile_deps = {sha};
+}
+
+hmac1b = c.shared{'hmac1b';
+  base     = 'sha';
+  src      = {'hmac'};
+  defines  = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+    "USE_SHA1";
+  };
+  incdir   = J('..', 'aes');
+  libdir   = {'sha'};
+  libs     = {'shab'};
+  dynamic  = DYNAMIC;
+  compile_deps = {shab};
+}
+
+hmac256 = c.shared{'hmac256';
+  base     = 'sha';
+  src      = {'hmac'};
+  defines  = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+    "USE_SHA256";
+  };
+  incdir   = J('..', 'aes');
+  libdir   = {'sha'};
+  libs     = {'sha'};
+  dynamic  = DYNAMIC;
+  compile_deps = {sha};
+}
+
+hmac256b = c.shared{'hmac256b';
+  base     = 'sha';
+  src      = {'hmac'};
+  defines  = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+    "USE_SHA256";
+  };
+  incdir   = J('..', 'aes');
+  libdir   = {'sha'};
+  libs     = {'shab'};
+  dynamic  = DYNAMIC;
+  compile_deps = {shab};
+}
+
+fileenc =  c.shared{'fileenc';
+  base     = 'fileenc';
+  src      = {'fileenc', J('..', 'sha', 'pwd2key')};
+  defines  = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+    "USE_SHA1";
+  };
+  incdir   = {
+    J('..', 'aes');
+    J('..', 'sha');
+  };
+  libdir   = {'aes', 'sha'};
+  libs     = {'aes', 'sha', 'hmac1'};
+  dynamic  = DYNAMIC;
+  compile_deps = {sha, hmac1};
+}
+
+rfc3686 = c.program{'rfc3686';
+  base   = J('test', 'rfc3686');
+  src    = '*.c';
+  incdir = J('..', '..', 'aes');
+  libdir = J('aes');
+  libs   = {'aes'};
+  compile_deps = {aes}
+}
+
+avs = c.program{'avs';
+  base   = J('test', 'avs');
+  src    = '*.c';
+  incdir = J('..', '..', 'aes');
+  libdir = J('aes');
+  libs   = {'aes'};
+  compile_deps = {aes}
+}
+
+basic = c.program{'basic';
+  base   = J('test', 'basic');
+  src    = '*.c';
+  incdir = J('..', '..', 'aes');
+  libdir = J('aes');
+  libs   = {'aes'};
+  cflags = {IF(not MSVC, "-Wunused-but-set-variable")};
+  compile_deps = {aes}
+}
+
+rav = c.program{'rav';
+  base   = J('test', 'rav');
+  src    = {'*.c', J('..', 'basic', 'aesaux')};
+  incdir = { J('..', '..', 'aes'), J('..', 'basic')};
+  libdir = J('aes');
+  libs   = {'aes'};
+  compile_deps = {aes}
+}
+
+sha1_test = c.program{'sha1_test';
+  base         = 'sha';
+  src          = {'pwd2key'};
+  defines      = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+    "USE_SHA1";
+    "TEST";
+  };
+  incdir       = J('..', 'aes');
+  libdir       = J('sha');
+  libs         = {'hmac1'};
+  compile_deps = {hmac1};
+}
+
+sha1b_test = c.program{'sha1b_test';
+  base         = 'sha';
+  src          = {'pwd2key'};
+  defines      = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+    "USE_SHA1";
+    "TEST";
+  };
+  incdir       = J('..', 'aes');
+  libdir       = J('sha');
+  libs         = {'hmac1b'};
+  compile_deps = {hmac1b};
+}
+
+sha256_test = c.program{'sha256_test';
+  base         = 'sha';
+  src          = {'pwd2key'};
+  defines      = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+    "USE_SHA256";
+    "TEST";
+  };
+  incdir       = J('..', 'aes');
+  libdir       = J('sha');
+  libs         = {'hmac256'};
+  compile_deps = {hmac256};
+}
+
+sha256b_test = c.program{'sha256b_test';
+  base         = 'sha';
+  src          = {'pwd2key'};
+  defines      = L{DEFINES;
+    IF(WINDOWS, 'DLL_EXPORT');
+    "USE_SHA256";
+    "TEST";
+  };
+  incdir       = J('..', 'aes');
+  libdir       = J('sha');
+  libs         = {'hmac256b'};
+  compile_deps = {hmac256b};
+}
+
+target('build', { aes, sha, shab, hmac1, hmac256, fileenc})
+
+install_test = target('install_test', {
+  file.group{odir = TESTDIR; src = aes          };
+  file.group{odir = TESTDIR; src = fileenc      };
+  file.group{odir = TESTDIR; src = sha          };
+  file.group{odir = TESTDIR; src = shab         };
+  file.group{odir = TESTDIR; src = hmac1        };
+  file.group{odir = TESTDIR; src = hmac256      };
+  file.group{odir = TESTDIR; src = hmac1b       };
+  file.group{odir = TESTDIR; src = hmac256b     };
+
+  file.group{odir = TESTDIR; src = basic        };
+  file.group{odir = TESTDIR; src = rfc3686      };
+  file.group{odir = TESTDIR; src = avs          };
+  file.group{odir = TESTDIR; src = rav          };
+  file.group{odir = TESTDIR; src = sha1_test    };
+  file.group{odir = TESTDIR; src = sha256_test  };
+  file.group{odir = TESTDIR; src = sha1b_test    };
+  file.group{odir = TESTDIR; src = sha256b_test  };
+  file.group{odir = TESTDIR; src = J('test', 'data', '*.rsp')};
+  file.group{odir = TESTDIR; src = J('test', 'data', '*.txt')};
+})
+
+test = target('test', install_test, function()
+  exec_test(basic.name)
+  exec_test(rfc3686.name)
+  exec_test(avs.name)
+  exec_test(rav.name, "/t:k")
+  exec_test(rav.name, "/t:n")
+  exec_test(rav.name, "/t:e")
+  exec_test(rav.name, "/t:c")
+  exec_test(sha1_test.name)
+  exec_test(sha256_test.name)
+  exec_test(sha1b_test.name)
+  exec_test(sha256b_test.name)
+  if not test_summary() then
+    quit("test fail")
+  end
+end)
