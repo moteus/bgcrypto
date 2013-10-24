@@ -90,7 +90,7 @@ hmac256b = c.shared{'hmac256b'; shab;
 }
 target('hmac256b', hmac256b)
 
-fileenc =  c.shared{'fileenc'; sha, hmac1;
+fileenc =  c.shared{'fileenc'; aes, sha, hmac1;
   base     = 'fileenc';
   src      = {'fileenc', J('..', 'sha', 'pwd2key')};
   defines  = L{DEFINES;
@@ -183,15 +183,17 @@ target('sha256b_test', sha256b_test)
 
 target('build', { aes, sha, shab, hmac1, hmac256, hmac1, hmac256b, fileenc })
 
+local function JSO(...) return IF(WINDOWS, ..., J(...)) end
+
 install_test = target('install_test', {
-  file.group{odir = J(TESTDIR, 'aes'      ); src = aes          };
-  file.group{odir = J(TESTDIR, 'fileenc'  ); src = fileenc      };
-  file.group{odir = J(TESTDIR, 'sha'      ); src = sha          };
-  file.group{odir = J(TESTDIR, 'sha'      ); src = shab         };
-  file.group{odir = J(TESTDIR, 'sha'      ); src = hmac1        };
-  file.group{odir = J(TESTDIR, 'sha'      ); src = hmac256      };
-  file.group{odir = J(TESTDIR, 'sha'      ); src = hmac1b       };
-  file.group{odir = J(TESTDIR, 'sha'      ); src = hmac256b     };
+  file.group{odir = JSO(TESTDIR, 'aes'      ); src = aes          };
+  file.group{odir = JSO(TESTDIR, 'fileenc'  ); src = fileenc      };
+  file.group{odir = JSO(TESTDIR, 'sha'      ); src = sha          };
+  file.group{odir = JSO(TESTDIR, 'sha'      ); src = shab         };
+  file.group{odir = JSO(TESTDIR, 'sha'      ); src = hmac1        };
+  file.group{odir = JSO(TESTDIR, 'sha'      ); src = hmac256      };
+  file.group{odir = JSO(TESTDIR, 'sha'      ); src = hmac1b       };
+  file.group{odir = JSO(TESTDIR, 'sha'      ); src = hmac256b     };
 
   file.group{odir = TESTDIR; src = basic        };
   file.group{odir = TESTDIR; src = rfc3686      };
