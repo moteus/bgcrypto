@@ -1,7 +1,5 @@
 PROJECT = 'AesFileEncrypt'
 
--- INITLAKEFILE()
-
 DEFINES = {''} -- bug in lake 1.4.1
 
 TESTDIR = J('.', 'test', 'bin')
@@ -213,8 +211,8 @@ test = target('test', install_test, function()
   exec_test(J('.', avs.name         ))
   exec_test(J('.', rav.name         ), "/t:k")
   exec_test(J('.', rav.name         ), "/t:n")
-  exec_test(J('.', rav.name         ), "/t:e")
-  exec_test(J('.', rav.name         ), "/t:c")
+  -- exec_test(J('.', rav.name         ), "/t:e")
+  -- exec_test(J('.', rav.name         ), "/t:c")
   exec_test(J('.', sha1_test.name   ))
   exec_test(J('.', sha256_test.name ))
   exec_test(J('.', sha1b_test.name  ))
