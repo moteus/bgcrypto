@@ -196,9 +196,10 @@ function INITLAKEFILE()
     LUA_RUNNER = LUA_RUNNER or 'lua'
   else
     LUA_NEED   = 'lua'
-    LUA_DIR    = ENV.LUA_DIR
+    LUA_DIR    = LUA_DIR or ENV.LUA_DIR
     LUA_RUNNER = LUA_RUNNER or 'lua'
   end
+  LUA_DIR = LUA_
   ROOT    = ROOT    or J( LUA_DIR, 'libs', PROJECT )
   LUADIR  = LUADIR  or J( ROOT,    'share'         )
   LIBDIR  = LIBDIR  or J( ROOT,    'share'         )
@@ -210,6 +211,7 @@ end
 -----------------------
 -- needs --
 -----------------------
+do return end
 
 lake.define_need('lua53', function()
   return {

@@ -27,8 +27,9 @@
 
 #ifndef __GNUC__
 #  include <windows.h>
+#  include <direct.h>
 #endif
-#include <direct.h>
+
 #include "aes.h"
 #include "aesaux.h"
 #include "aestst.h"

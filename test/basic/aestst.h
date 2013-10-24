@@ -36,9 +36,9 @@
 #define DYNAMIC_LINK
 
 #define abs_path    "C:\\Users\\Brian Gladman\\Documents\\Visual Studio 2010\\Projects\\aes\\"
-#define rel_path    ".\\"
-#define ref_path    ".\\"                    // path for test vector files
-#define out_path    ".\\outvals\\"      // path for output files
+#define rel_path    "./"
+#define ref_path    "./"                    // path for test vector files
+#define out_path    "./outvals/"      // path for output files
 #if 0
 #  define ar_path   abs_path
 #else
@@ -61,7 +61,9 @@
 
 #if defined( DLL_IMPORT ) && defined( DYNAMIC_LINK )
 
-#include <windows.h>
+#if defined( _WIN32)
+#  include <windows.h>
+#endif
 
 #define f_info(x)   (x)->inf.b[2]
 #define f_ectx      aes_encrypt_ctx

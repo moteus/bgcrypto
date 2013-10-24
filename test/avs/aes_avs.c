@@ -52,7 +52,7 @@ char *hdr_str[] = { "COUNT = ", "KEY = ", "IV = ", "PLAINTEXT = ", "CIPHERTEXT =
 #if 0
   char *test_path = "C:\\Users\\Brian\\Documents\\Visual Studio 2008\\Projects\\aes\\testvals\\fax\\";
 #else
-  char *test_path = ".\\";
+  char *test_path = "./";
 #endif
 
 char *hxx = "0123456789abcdef";

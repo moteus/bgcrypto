@@ -1,6 +1,8 @@
 PROJECT = 'AesFileEncrypt'
 
-INITLAKEFILE()
+-- INITLAKEFILE()
+
+DEFINES = {''} -- bug in lake 1.4.1
 
 TESTDIR = J('.', 'test', 'bin')
 
@@ -16,6 +18,7 @@ aes = c.shared{'aes';
   };
   dynamic  = DYNAMIC;
 }
+target('aes', aes)
 
 sha = c.shared{'sha';
   base     = 'sha';
@@ -26,6 +29,7 @@ sha = c.shared{'sha';
   incdir   = J('..', 'aes');
   dynamic  = DYNAMIC;
 }
+target('sha', sha)
 
 shab = c.shared{'shab';
   base     = 'sha';
@@ -36,8 +40,9 @@ shab = c.shared{'shab';
   incdir   = J('..', 'aes');
   dynamic  = DYNAMIC;
 }
+target('shab', shab)
 
-hmac1 = c.shared{'hmac1';
+hmac1 = c.shared{'hmac1'; sha;
   base     = 'sha';
   src      = {'hmac'};
   defines  = L{DEFINES;
@@ -45,13 +50,11 @@ hmac1 = c.shared{'hmac1';
     "USE_SHA1";
   };
   incdir   = J('..', 'aes');
-  libdir   = {'sha'};
-  libs     = {'sha'};
   dynamic  = DYNAMIC;
-  compile_deps = {sha};
 }
+target('hmac1', hmac1)
 
-hmac1b = c.shared{'hmac1b';
+hmac1b = c.shared{'hmac1b'; shab;
   base     = 'sha';
   src      = {'hmac'};
   defines  = L{DEFINES;
@@ -59,13 +62,11 @@ hmac1b = c.shared{'hmac1b';
     "USE_SHA1";
   };
   incdir   = J('..', 'aes');
-  libdir   = {'sha'};
-  libs     = {'shab'};
   dynamic  = DYNAMIC;
-  compile_deps = {shab};
 }
+target('hmac1b', hmac1b)
 
-hmac256 = c.shared{'hmac256';
+hmac256 = c.shared{'hmac256'; sha;
   base     = 'sha';
   src      = {'hmac'};
   defines  = L{DEFINES;
@@ -73,13 +74,11 @@ hmac256 = c.shared{'hmac256';
     "USE_SHA256";
   };
   incdir   = J('..', 'aes');
-  libdir   = {'sha'};
-  libs     = {'sha'};
   dynamic  = DYNAMIC;
-  compile_deps = {sha};
 }
+target('hmac256', hmac256)
 
-hmac256b = c.shared{'hmac256b';
+hmac256b = c.shared{'hmac256b'; shab;
   base     = 'sha';
   src      = {'hmac'};
   defines  = L{DEFINES;
@@ -87,13 +86,11 @@ hmac256b = c.shared{'hmac256b';
     "USE_SHA256";
   };
   incdir   = J('..', 'aes');
-  libdir   = {'sha'};
-  libs     = {'shab'};
   dynamic  = DYNAMIC;
-  compile_deps = {shab};
 }
+target('hmac256b', hmac256b)
 
-fileenc =  c.shared{'fileenc';
+fileenc =  c.shared{'fileenc'; sha, hmac1;
   base     = 'fileenc';
   src      = {'fileenc', J('..', 'sha', 'pwd2key')};
   defines  = L{DEFINES;
@@ -104,50 +101,39 @@ fileenc =  c.shared{'fileenc';
     J('..', 'aes');
     J('..', 'sha');
   };
-  libdir   = {'aes', 'sha'};
-  libs     = {'aes', 'sha', 'hmac1'};
   dynamic  = DYNAMIC;
-  compile_deps = {sha, hmac1};
 }
+target('fileenc', fileenc)
 
-rfc3686 = c.program{'rfc3686';
+rfc3686 = c.program{'rfc3686'; aes;
   base   = J('test', 'rfc3686');
-  src    = '*.c';
+  src    = {'*.c'};
   incdir = J('..', '..', 'aes');
-  libdir = J('aes');
-  libs   = {'aes'};
-  compile_deps = {aes}
 }
+target('rfc3686', rfc3686)
 
-avs = c.program{'avs';
+avs = c.program{'avs'; aes;
   base   = J('test', 'avs');
   src    = '*.c';
   incdir = J('..', '..', 'aes');
-  libdir = J('aes');
-  libs   = {'aes'};
-  compile_deps = {aes}
 }
+target('avs', avs)
 
-basic = c.program{'basic';
+basic = c.program{'basic'; aes;
   base   = J('test', 'basic');
   src    = '*.c';
   incdir = J('..', '..', 'aes');
-  libdir = J('aes');
-  libs   = {'aes'};
-  cflags = {IF(not MSVC, "-Wunused-but-set-variable")};
-  compile_deps = {aes}
 }
+target('basic', basic)
 
-rav = c.program{'rav';
+rav = c.program{'rav'; aes;
   base   = J('test', 'rav');
   src    = {'*.c', J('..', 'basic', 'aesaux')};
   incdir = { J('..', '..', 'aes'), J('..', 'basic')};
-  libdir = J('aes');
-  libs   = {'aes'};
-  compile_deps = {aes}
 }
+target('rav', rav)
 
-sha1_test = c.program{'sha1_test';
+sha1_test = c.program{'sha1_test'; sha, hmac1;
   base         = 'sha';
   src          = {'pwd2key'};
   defines      = L{DEFINES;
@@ -156,12 +142,10 @@ sha1_test = c.program{'sha1_test';
     "TEST";
   };
   incdir       = J('..', 'aes');
-  libdir       = J('sha');
-  libs         = {'hmac1'};
-  compile_deps = {hmac1};
 }
+target('sha1_test', sha1_test)
 
-sha1b_test = c.program{'sha1b_test';
+sha1b_test = c.program{'sha1b_test'; shab, hmac1b;
   base         = 'sha';
   src          = {'pwd2key'};
   defines      = L{DEFINES;
@@ -170,12 +154,10 @@ sha1b_test = c.program{'sha1b_test';
     "TEST";
   };
   incdir       = J('..', 'aes');
-  libdir       = J('sha');
-  libs         = {'hmac1b'};
-  compile_deps = {hmac1b};
 }
+target('sha1b_test', sha1b_test)
 
-sha256_test = c.program{'sha256_test';
+sha256_test = c.program{'sha256_test'; sha, hmac256;
   base         = 'sha';
   src          = {'pwd2key'};
   defines      = L{DEFINES;
@@ -184,12 +166,10 @@ sha256_test = c.program{'sha256_test';
     "TEST";
   };
   incdir       = J('..', 'aes');
-  libdir       = J('sha');
-  libs         = {'hmac256'};
-  compile_deps = {hmac256};
 }
+target('sha256_test', sha256_test)
 
-sha256b_test = c.program{'sha256b_test';
+sha256b_test = c.program{'sha256b_test'; shab, hmac256b;
   base         = 'sha';
   src          = {'pwd2key'};
   defines      = L{DEFINES;
@@ -198,22 +178,20 @@ sha256b_test = c.program{'sha256b_test';
     "TEST";
   };
   incdir       = J('..', 'aes');
-  libdir       = J('sha');
-  libs         = {'hmac256b'};
-  compile_deps = {hmac256b};
 }
+target('sha256b_test', sha256b_test)
 
-target('build', { aes, sha, shab, hmac1, hmac256, fileenc})
+target('build', { aes, sha, shab, hmac1, hmac256, hmac1, hmac256b, fileenc })
 
 install_test = target('install_test', {
-  file.group{odir = TESTDIR; src = aes          };
-  file.group{odir = TESTDIR; src = fileenc      };
-  file.group{odir = TESTDIR; src = sha          };
-  file.group{odir = TESTDIR; src = shab         };
-  file.group{odir = TESTDIR; src = hmac1        };
-  file.group{odir = TESTDIR; src = hmac256      };
-  file.group{odir = TESTDIR; src = hmac1b       };
-  file.group{odir = TESTDIR; src = hmac256b     };
+  file.group{odir = J(TESTDIR, 'aes'      ); src = aes          };
+  file.group{odir = J(TESTDIR, 'fileenc'  ); src = fileenc      };
+  file.group{odir = J(TESTDIR, 'sha'      ); src = sha          };
+  file.group{odir = J(TESTDIR, 'sha'      ); src = shab         };
+  file.group{odir = J(TESTDIR, 'sha'      ); src = hmac1        };
+  file.group{odir = J(TESTDIR, 'sha'      ); src = hmac256      };
+  file.group{odir = J(TESTDIR, 'sha'      ); src = hmac1b       };
+  file.group{odir = J(TESTDIR, 'sha'      ); src = hmac256b     };
 
   file.group{odir = TESTDIR; src = basic        };
   file.group{odir = TESTDIR; src = rfc3686      };
@@ -228,17 +206,17 @@ install_test = target('install_test', {
 })
 
 test = target('test', install_test, function()
-  exec_test(basic.name)
-  exec_test(rfc3686.name)
-  exec_test(avs.name)
-  exec_test(rav.name, "/t:k")
-  exec_test(rav.name, "/t:n")
-  exec_test(rav.name, "/t:e")
-  exec_test(rav.name, "/t:c")
-  exec_test(sha1_test.name)
-  exec_test(sha256_test.name)
-  exec_test(sha1b_test.name)
-  exec_test(sha256b_test.name)
+  exec_test(J('.', basic.name       ))
+  exec_test(J('.', rfc3686.name     ))
+  exec_test(J('.', avs.name         ))
+  exec_test(J('.', rav.name         ), "/t:k")
+  exec_test(J('.', rav.name         ), "/t:n")
+  exec_test(J('.', rav.name         ), "/t:e")
+  exec_test(J('.', rav.name         ), "/t:c")
+  exec_test(J('.', sha1_test.name   ))
+  exec_test(J('.', sha256_test.name ))
+  exec_test(J('.', sha1b_test.name  ))
+  exec_test(J('.', sha256b_test.name))
   if not test_summary() then
     quit("test fail")
   end

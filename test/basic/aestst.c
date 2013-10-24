@@ -47,7 +47,6 @@
 
 #include <stdio.h>
 #include <memory.h>
-#include <windows.h>
 #include <string.h>
 
 #ifdef AES_CPP
