@@ -579,7 +579,7 @@ AES_RETURN aes_cfb_encrypt(const unsigned char *ibuf, unsigned char *obuf,
 }
 
 AES_RETURN aes_cfb_decrypt(const unsigned char *ibuf, unsigned char *obuf,
-                    int len, unsigned char *iv, aes_encrypt_ctx ctx[1])
+                    int len, unsigned char *iv, aes_decrypt_ctx ctx[1])
 {   int cnt = 0, b_pos = (int)ctx->inf.b[2], nb;
 
     if(b_pos)           /* complete any partial block   */

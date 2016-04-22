@@ -173,7 +173,7 @@ AES_RETURN aes_cfb_encrypt(const unsigned char *ibuf, unsigned char *obuf,
                     int len, unsigned char *iv, aes_encrypt_ctx cx[1]);
 
 AES_RETURN aes_cfb_decrypt(const unsigned char *ibuf, unsigned char *obuf,
-                    int len, unsigned char *iv, aes_encrypt_ctx cx[1]);
+                    int len, unsigned char *iv, aes_decrypt_ctx cx[1]);
 
 #define aes_ofb_encrypt aes_ofb_crypt
 #define aes_ofb_decrypt aes_ofb_crypt
