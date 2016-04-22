@@ -10,17 +10,15 @@ matrix:
     - compiler: ": Lua51"
       env: LUA="lua 5.1"
 
-cache:
-  directories:
-    - here
-    - $HOME/.cache/pip
-
 before_install:
   - export CC=gcc
   - pip install --user hererocks
   - hererocks here -r^ --$LUA
   - export PATH=$PATH:$PWD/here/bin
   - luarocks install lake
+
+install:
+  - lake install_test
 
 script:
   - lake test
